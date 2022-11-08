@@ -72,3 +72,9 @@ base I was working with. This demo created a Many-to-Many relationship
 between ~Media~ and ~Tag~, with the detail that ~Media~ does not have
 its own collection, but is rather a nested field of the collection
 ~Playlist~.
+
+* References
+
+- [[https://mongoosejs.com/docs/populate.html#populate-virtuals][Populate Virtuals]]
+- [[https://mongoosejs.com/docs/populate.html#deep-populate][Populate across multiple levels]]
+- [[https://www.bezkoder.com/mongodb-many-to-many-mongoose/][MongoDB Many-to-Many Relationship with Mongoose examples]]
