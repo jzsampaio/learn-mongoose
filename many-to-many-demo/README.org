@@ -1,0 +1,74 @@
+#+TITLE: Many to Many supported by a "Join Collection"
+
+* Many to Many
+
+A many to many relationship between two entities A and B allows for
+many A's to be associated to many B's and vice versa.
+
+A common example is that of ~Students~ which sign up for many
+  ~Classes~, whereas each ~Class~ can have many ~Students~
+
+  
+* Alternative Implementations with Mongoose
+
+** Populate
+
+- We add a list of IDs to one of the entities. For example, each
+  object in collection ~A~ has a list of IDs of objects in ~B~
+- We use mongoose's ~populate~ in order to retrieve the full list of
+  information of objects ~B~ for each object ~A~
+
+**Downside/Limitation**
+
+- What if we want, for a given object ~b: B~, the list of all
+  associated ~a: A~ objects?
+
+** Populate + Maintain two lists
+
+- We can do the same as the first approach, but keep 2 lists: one for
+  each ~a~ and one for each ~b~
+- For example: if John sign up for Calculus I, we add both "Calculus"
+  to john's list of classes, as well as "John" to Calculus's list of
+  students.
+
+**Downside/Limitation**
+
+- It is annoying and bug prone to keep these lists in sync
+  
+** Create a "Join Collection"
+
+- Instead of writing the list of ids to either one of both of the
+  collections, we can create a join collection.
+- For the case of Students-Classes, we could create a collection with
+  ~(StudentId, ClassId)~ pairs
+- During time, we query the collection to find:
+    * The list of all students in a given class
+    * The list of all classes of a given student
+
+** "Join Collection" + Virtual Populates + Populate across Multiple Levels
+
+- We can use mongoose's populate in order to add "virtual" fields to
+  each document
+- These virtual fields are not written to mongo, but they are
+  available on runtime
+- E.g.:
+    * On collection ~Student~ we add a virtual field called ~classes~
+    * This virtual field is computed by scanning ~StudentClassPairs~
+      and filtering for matching student ID
+- Plus we can populate information from the class
+  
+
+
+* This Demo
+
+On this demo, the collections are:
+
+- Playlist: contains a list of medias
+- Tag: meta data to be associate to each media
+- MediaTag: pairs of "mediaId" and "tagId"
+
+This schema was fine tuned to match the structure of an existing code
+base I was working with. This demo created a Many-to-Many relationship
+between ~Media~ and ~Tag~, with the detail that ~Media~ does not have
+its own collection, but is rather a nested field of the collection
+~Playlist~.
